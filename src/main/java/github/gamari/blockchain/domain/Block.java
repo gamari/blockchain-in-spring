@@ -36,14 +36,6 @@ public class Block {
 		return hashValue;
 	}
 	
-	public void mineBlock(int difficulty) {
-		String targetHash = new String(new char[difficulty]).replace('\0', '0');
-		while (!hash.substring(0, difficulty).equals(targetHash)) {
-			nonce++;
-			hash = hash();
-		}
-	}
-	
 
 	@Override
 	public String toString() {
@@ -62,6 +54,10 @@ public class Block {
 
 	public void setHash(String hash) {
 		this.hash = hash;
+	}
+	
+	public List<Transaction> getTransactions() {
+		return transactions;
 	}
 	
 	

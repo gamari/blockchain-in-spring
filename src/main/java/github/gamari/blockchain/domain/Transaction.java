@@ -7,9 +7,9 @@ import java.math.BigDecimal;
  *
  */
 public class Transaction {
-	String senderAddress;
-	String recipientAddress;
-	BigDecimal value;
+	private String senderAddress;
+	private String recipientAddress;
+	private BigDecimal value;
 	
 	public Transaction(String senderAddress, String recipientAddress, BigDecimal value) {
 		this.senderAddress = senderAddress;
@@ -24,5 +24,17 @@ public class Transaction {
 		sb.append("  recipientAddress: " + this.recipientAddress + "\n");
 		sb.append("  value: " + this.value + "\n");
 		return sb.toString();
+	}
+	
+	public BigDecimal getValue() {
+		return value;
+	}
+	
+	public String getRecipientAddress() {
+		return recipientAddress;
+	}
+	
+	public String getSenderAddress() {
+		return senderAddress;
 	}
 }

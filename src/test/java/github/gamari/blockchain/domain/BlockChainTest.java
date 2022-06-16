@@ -4,28 +4,29 @@ import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
 
-class BlockChainTest extends BlockChain {
+class BlockChainTest {
 
 	@Test
 	void test() {
-		BlockChain bc = new BlockChain();
+		String minerAddress = "MINER_A";
+		BlockChain bc = new BlockChain(minerAddress);
 		
 		// block1
-		bc.addTransaction("A", "B", new BigDecimal(1.0));
-		int nonce = bc.proofOfWork();
-		bc.createBlock(nonce, bc.previousHash());
+		bc.addTransaction("A", "B", new BigDecimal("1.0"));
+		bc.mining();
 
 		// block2
-		bc.addTransaction("C", "D", new BigDecimal(3.5));
-		bc.addTransaction("X", "Y", new BigDecimal(8.9));
-		nonce = bc.proofOfWork();
-		bc.createBlock(nonce, bc.previousHash());
+		bc.addTransaction("C", "D", new BigDecimal("3.5"));
+		bc.addTransaction("X", "Y", new BigDecimal("8.8"));
+		bc.mining();
 		
 		// block3
-		nonce = bc.proofOfWork();
-		bc.createBlock(nonce, bc.previousHash());
+		bc.mining();
 
 		bc.printChain();
+		
+		System.out.println(bc.calculateTotalAmount(minerAddress));
+		System.out.println(bc.calculateTotalAmount("C"));
 	}
 
 }

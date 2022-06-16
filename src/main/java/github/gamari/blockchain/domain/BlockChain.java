@@ -7,14 +7,19 @@ import java.util.Date;
 import java.util.List;
 
 public class BlockChain {
+	
+	private static final String BLOCKCHAIN_NETWORK_ADDRESS = "BLOCKCHAIN_NETWORK";
+	private static final BigDecimal REWORDS = new BigDecimal("1.0");
 
 	List<Transaction> transactionPool;
 	List<Block> chain;
+	String minerAddress;
 	
-	public BlockChain() {
+	public BlockChain(String minerAddress) {
 		this.transactionPool = new ArrayList<Transaction>();
 		this.chain = new ArrayList<Block>();
 		this.createBlock(0, "init hash");
+		this.minerAddress = minerAddress;
 	}
 	
 	public Block createBlock(int nonce, String previousHash) {
@@ -59,6 +64,32 @@ public class BlockChain {
 		
 		return ret;
 	}
+	
+	public boolean mining() {
+		this.addTransaction(BLOCKCHAIN_NETWORK_ADDRESS, minerAddress, REWORDS);
+		int nonce = this.proofOfWork();
+		String previousHash = this.previousHash();
+		this.createBlock(nonce, previousHash);
+		return true;
+	}
+	
+	public BigDecimal calculateTotalAmount(String address) {
+		BigDecimal total = new BigDecimal("0.0");
+		for (Block block: this.chain) {
+			for (Transaction transaction: block.getTransactions()) {
+				
+				if (address.equals(transaction.getRecipientAddress())) {
+					total = total.add(transaction.getValue());
+				}
+				
+				if (address.equals(transaction.getSenderAddress())) {
+					total = total.subtract(transaction.getValue());
+				}
+			}
+		}
+		return total;
+	}
+	
 	
 	public void printChain() {
 		int count = 0;
