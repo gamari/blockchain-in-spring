@@ -1,6 +1,8 @@
 package github.gamari.blockchain.domain;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.Entity;
 
@@ -12,33 +14,25 @@ import github.gamari.blockchain.logic.Sha256Algorithm;
  */
 @Entity
 public class Block {
-	/** 実データ。 */
-	private String data;
 	
-	/** 書名を格納。 */
+	private List<Transaction> transactions;
 	private String hash;
-	
-	/**  */
 	private String previousHash;
-	
-	private long timestamp;
+	private Date timestamp;
 	
 	/** PoW用。 */
 	private int nonce;
 	
-	public Block(String data, String previousHash) {
-		this.data = data;
+	public Block(String previousHash, int nonce, Date timestamp, List<Transaction> transactions) {
+		this.timestamp = timestamp;
+		this.transactions = transactions;
 		this.previousHash = previousHash;
-		this.timestamp = new Date().getTime();
-		this.hash = hash();
+		this.nonce = nonce;
 	}
 	
-	/**
-	 * データ、前回のハッシュ値、時間を格納する。
-	 */
 	public String hash() {
 		Algorithm algorithm = new Sha256Algorithm();
-		String hashValue = algorithm.createHash(previousHash + data + Long.toString(timestamp) + nonce);
+		String hashValue = algorithm.createHash(previousHash + nonce + this.transactions.toString());
 		return hashValue;
 	}
 	
@@ -50,9 +44,18 @@ public class Block {
 		}
 	}
 	
-	
-	// getter setter
 
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append("timestamp: " + this.timestamp + "\n");
+		sb.append("nonce: " + this.nonce + "\n");
+		sb.append("previousHash: " + this.previousHash+ "\n");
+		sb.append("transactions: \n" + this.transactions.stream().map(t ->  t.toString()+"\n").collect(Collectors.joining()));
+		return sb.toString();
+	}
+	
+	// Getter Setter
 	public String getHash() {
 		return hash;
 	}

@@ -2,14 +2,7 @@ package github.gamari.blockchain.logic;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
-
-import com.google.gson.GsonBuilder;
-
-import github.gamari.blockchain.domain.Block;
 
 class Sha256AlgorithmTest extends Sha256Algorithm {
 
@@ -35,19 +28,6 @@ class Sha256AlgorithmTest extends Sha256Algorithm {
 
 	@Test
 	void test() {
-		// 適当にテストしてみる
-		List<Block> blockchain = new ArrayList<>();
-		
-		Block block1 = new Block("1", "0");
-		block1.mineBlock(3);
-		
-		// genesis block
-		blockchain.add(block1);
-		blockchain.add(new Block("2", blockchain.get(blockchain.size() -1).getHash()));
-		blockchain.add(new Block("3", blockchain.get(blockchain.size() -1).getHash()));
-		
-		String json = new GsonBuilder().setPrettyPrinting().create().toJson(blockchain);
-		System.out.println(json);
 		
 		
 	}
