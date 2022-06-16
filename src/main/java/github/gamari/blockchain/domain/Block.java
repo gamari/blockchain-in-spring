@@ -32,7 +32,7 @@ public class Block {
 	
 	public String hash() {
 		Algorithm algorithm = new Sha256Algorithm();
-		String hashValue = algorithm.createHash(previousHash + nonce + this.transactions.toString());
+		String hashValue = algorithm.createHash(previousHash + nonce + this.timestamp + this.transactions.toString());
 		return hashValue;
 	}
 	

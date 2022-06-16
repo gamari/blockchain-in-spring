@@ -2,6 +2,7 @@ package github.gamari.blockchain.domain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -32,6 +33,31 @@ public class BlockChain {
 		Transaction transaction = new Transaction(sender, recipient, value);
 		this.transactionPool.add(transaction);
 		return true;
+	}
+	
+	/**
+	 * 前回のブロック情報から解を求める。
+	 * この「解」は 
+	 */
+	public int proofOfWork() {
+		int nonce = 0;
+		String previousHash = this.previousHash();
+		while (!this.validProof(this.transactionPool, previousHash, nonce, 3)) {
+			nonce++;
+		}
+		
+		return nonce;
+	}
+	
+	public boolean validProof(List<Transaction> transactions, String previousHash, int nonce, int difficulty) {
+		Block guessBlock = new Block(previousHash, nonce, null, transactions);
+		String guessHash = guessBlock.hash();
+		
+		// TODO ロジックを変更する
+		String diff = guessHash.substring(0, difficulty);
+		boolean ret = Arrays.stream(diff.split("")).allMatch(s -> s.equals("0"));
+		
+		return ret;
 	}
 	
 	public void printChain() {
