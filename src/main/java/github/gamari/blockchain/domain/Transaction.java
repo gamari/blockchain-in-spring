@@ -1,6 +1,9 @@
 package github.gamari.blockchain.domain;
 
 import java.math.BigDecimal;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.Signature;
 
 /**
  * 取引履歴。
@@ -9,12 +12,42 @@ import java.math.BigDecimal;
 public class Transaction {
 	private String senderAddress;
 	private String recipientAddress;
+	private PublicKey senderPublicKey;
+	private PrivateKey senderPrivateKey;
 	private BigDecimal value;
 	
-	public Transaction(String senderAddress, String recipientAddress, BigDecimal value) {
+	public Transaction(String senderAddress, 
+			String recipientAddress, 
+			PublicKey senderPublicKey,
+			PrivateKey senderPrivateKey,
+			BigDecimal value) {
 		this.senderAddress = senderAddress;
 		this.recipientAddress = recipientAddress;
+		this.senderPublicKey = senderPublicKey;
+		this.senderPrivateKey = senderPrivateKey;
 		this.value = value;
+	}
+	
+	public byte[] generateSignature() {
+		try {			
+			String originalText = getTransactionMessage();
+			
+			// messageにサインする
+			Signature sig = Signature.getInstance("SHA1withECDSA");
+	        sig.initSign(senderPrivateKey);
+	        sig.update(originalText.getBytes());
+	        byte[] sign = sig.sign();
+	        
+	        return sign;
+		} catch (Exception e) {
+			// TODO loggerに変更する
+			e.printStackTrace();
+			return new byte[] {};
+		}
+	}
+	
+	public String getTransactionMessage() {
+		return senderAddress + recipientAddress + value;
 	}
 
 	@Override
@@ -36,5 +69,9 @@ public class Transaction {
 	
 	public String getSenderAddress() {
 		return senderAddress;
+	}
+	
+	public PublicKey getSenderPublicKey() {
+		return senderPublicKey;
 	}
 }

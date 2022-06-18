@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.Security;
 import java.util.Base64;
 
@@ -23,12 +24,12 @@ public class Wallet {
 	public Wallet() throws Exception {
 		// 1. 楕円曲線でキーを作る
 		KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
+		SecureRandom secureRandom = new SecureRandom();
+		generator.initialize(256, secureRandom);
 		KeyPair keyPair = generator.generateKeyPair();
-		PublicKey pubKey = keyPair.getPublic();
-		PrivateKey priKey = keyPair.getPrivate();
-
-		publicKey = pubKey;
-		privateKey = priKey;
+		publicKey = keyPair.getPublic();
+		privateKey = keyPair.getPrivate();
+		
 		this.blockchainAddress = generateBlockchainAddress();
 
 	}
@@ -48,7 +49,6 @@ public class Wallet {
 		md = MessageDigest.getInstance("RIPEMD160", "BC");
 		md.update(sha256PublicKeyDigest);
 		byte[] ripemd160PublicKeyDigest = md.digest();
-//		char[] ripemd160PublicKeyHex = Hex.encodeHex(ripemd160PublicKeyDigest);
 
 		// 4.
 		byte[] networkByte = new byte[] { 0, 0 };
@@ -80,16 +80,20 @@ public class Wallet {
 		// ビットコインではBas58を利用している
 		String blockchainAddress = Base64.getEncoder().encodeToString(addressHex);
 
-		// 確認
-//		PrintUtil.printBytes(sha256PublicKeyDigest);
-//		PrintUtil.printBytes(ripemd160PublicKeyDigest);
-//		PrintUtil.printBytes(networkBitcoinPublicKey);
-//		PrintUtil.printBytes(sha256NetworkBitcoinDigest2);
-//		PrintUtil.printBytes(addressHex);
-//		System.out.println(sha256NetworkBitcoinHex);
-//		System.out.println(checkSum);
-//		System.out.println(blockchainAddress);
-
 		return blockchainAddress;
 	}
+
+	// Getter Setter
+	public String getBlockchainAddress() {
+		return blockchainAddress;
+	}
+
+	public PublicKey getPublicKey() {
+		return publicKey;
+	}
+
+	public PrivateKey getPrivateKey() {
+		return privateKey;
+	}
+
 }
