@@ -28,7 +28,7 @@ public class BlockChain {
 		this.minerAddress = minerAddress;
 	}
 	
-	public static BlockChain getInstance(String minerAddress) {
+	public static BlockChain getInstance() {
 		// TODO DBから取得するようにする。
 		if (blockchain == null) {
 			try {
@@ -177,6 +177,10 @@ public class BlockChain {
 	// Getter Setter
 	public List<Block> getChain() {
 		return chain;
+	}
+	
+	public List<Transaction> getTransactionPool() {
+		return transactionPool;
 	}
 
 }

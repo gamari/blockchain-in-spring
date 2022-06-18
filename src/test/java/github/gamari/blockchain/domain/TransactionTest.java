@@ -25,13 +25,15 @@ class TransactionTest {
 		Wallet walletB = new Wallet();
 
 		Transaction t = new Transaction(
-				walletA.getBlockchainAddress(), walletB.getBlockchainAddress(),
-				walletA.getPublicKey(), walletA.getPrivateKey(), 
+				walletA.getBlockchainAddress(), 
+				walletB.getBlockchainAddress(),
+				walletA.getPublicKey(), 
+				walletA.getPrivateKey(), 
 				new BigDecimal("1.1"));
 		
 		byte[] sign = t.generateSignature();
 
-		BlockChain blockchain = BlockChain.getInstance(walletM.getBlockchainAddress());
+		BlockChain blockchain = BlockChain.getInstance();
 		boolean isAdded = blockchain.addTransaction(t, sign);
 
 		System.out.println(isAdded);

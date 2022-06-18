@@ -17,8 +17,8 @@ public class WalletController {
 		Wallet wallet = new Wallet();
 
 		WalletResponse response = new WalletResponse(
-				new String(wallet.getPrivateKey().getEncoded()),
-				new String(wallet.getPublicKey().getEncoded()), 
+				wallet.getPrivateKeyString(),
+				wallet.getPublicKeyString(), 
 				wallet.getBlockchainAddress());
 
 		return response;

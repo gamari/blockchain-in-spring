@@ -7,7 +7,7 @@ class BlockChainTest {
 	@Test
 	void test() {
 		String minerAddress = "MINER_A";
-		BlockChain bc = BlockChain.getInstance(minerAddress);
+		BlockChain bc = BlockChain.getInstance();
 		
 		// block1
 		bc.mining();

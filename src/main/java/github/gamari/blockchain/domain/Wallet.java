@@ -29,14 +29,13 @@ public class Wallet {
 		KeyPair keyPair = generator.generateKeyPair();
 		publicKey = keyPair.getPublic();
 		privateKey = keyPair.getPrivate();
-		
+
 		this.blockchainAddress = generateBlockchainAddress();
 
 	}
 
 	/**
-	 * 擬似的なアドレスを生成する。
-	 * 若干、ビットコインのフロートは違うことに注意。
+	 * 擬似的なアドレスを生成する。 若干、ビットコインのフロートは違うことに注意。
 	 * 
 	 * @return ウォレットアドレス。
 	 */
@@ -101,5 +100,23 @@ public class Wallet {
 	public PrivateKey getPrivateKey() {
 		return privateKey;
 	}
+	
+	public String getPublicKeyString() {
+		try {
+			String ret = new String(Hex.encodeHex(publicKey.getEncoded()));
+			return ret;
+		} catch (Exception e) {
+			return "";
+		}
+	}
 
+	public String getPrivateKeyString() {
+		try {
+			String ret = new String(Hex.encodeHex(privateKey.getEncoded()));
+			return ret;
+		} catch (Exception e) {
+			return "";
+		}
+	}
+	
 }
