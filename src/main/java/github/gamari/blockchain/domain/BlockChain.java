@@ -10,21 +10,20 @@ public class BlockChain {
 	public static final String BLOCKCHAIN_NETWORK_ADDRESS = "BLOCKCHAIN_NETWORK";
 	private static BlockChain blockchain;
 	private static final BigDecimal REWORDS = new BigDecimal("1.0");
-	
-	private List<Transaction> transactionPool;
+
 	private List<Block> chain;
 	private String minerAddress;
 	private Wallet wallet;
+	private TransactionPool pool;
 
 	private BlockChain(String minerAddress, Wallet wallet) {
-		this.transactionPool = new ArrayList<Transaction>();
+		this.pool = new TransactionPool();
 		this.chain = new ArrayList<Block>();
 		this.createBlock(0, "init hash");
 		this.minerAddress = minerAddress;
 		this.wallet = wallet;
 	}
-	
-	
+
 	public static BlockChain getInstance() {
 		// TODO DBから取得するようにする。
 		if (blockchain == null) {
@@ -35,61 +34,31 @@ public class BlockChain {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return blockchain;
 	}
 
 	private Block createBlock(int nonce, String previousHash) {
-		Block newBlock = new Block(previousHash, nonce, new Date(), transactionPool);
+		Block newBlock = new Block(previousHash, nonce, new Date(), this.pool.getTransactions());
 		this.chain.add(newBlock);
-		transactionPool = new ArrayList<Transaction>();
-
+		this.pool.clear();
 		return newBlock;
 	}
-	
+
 	private String previousHash() {
 		return chain.get(chain.size() - 1).hash();
 	}
 
-	/**
-	 * トランザクションプールにトランザクションを追加する。
-	 * 
-	 * @param transaction
-	 * @param signature
-	 * @return
-	 */
-	public boolean addTransaction(Transaction transaction, byte[] signature) {
-		String senderAddress = transaction.getSenderAddress();
-		
-		if (isMinerAddress(senderAddress)) {
-			this.transactionPool.add(transaction);
-			return true;
-		}
 
-		if (transaction.verifyTransactionSignature(signature)) {
-			// TODO マイナスを判定する処理
-//			if (calculateTotalAmount(senderAddress).compareTo(transaction.getValue())  < 0) {
-//				System.out.println("MINUS");
-//				return false;
-//			}
-			
-			this.transactionPool.add(transaction);
-			return true;
-		}
 
-		return false;
-	}
-	
 	public boolean createTransaction(Transaction transaction, byte[] signature) {
-		boolean isCreated = addTransaction(transaction, signature);
-		
+		boolean isCreated = this.pool.addTransaction(transaction, signature, isChainAddress(transaction.getSenderAddress()));
+
 		// TODO Sync function
-		
 		return isCreated;
 	}
-	
-	
-	private boolean isMinerAddress(String senderAddress) {
+
+	private boolean isChainAddress(String senderAddress) {
 		return senderAddress.equals(BLOCKCHAIN_NETWORK_ADDRESS);
 	}
 
@@ -99,7 +68,7 @@ public class BlockChain {
 	private int proofOfWork() {
 		int nonce = 0;
 		String previousHash = this.previousHash();
-		while (!this.validProof(this.transactionPool, previousHash, nonce, 3)) {
+		while (!this.validProof(this.pool.getTransactions(), previousHash, nonce, 3)) {
 			nonce++;
 		}
 
@@ -118,12 +87,13 @@ public class BlockChain {
 	}
 
 	public boolean mining() {
-		if (this.transactionPool.size() == 0) {
+		if (this.pool.size() == 0) {
 			return false;
 		}
-		
-		Transaction transaction = new Transaction(BLOCKCHAIN_NETWORK_ADDRESS, minerAddress, wallet.getPublicKey(), wallet.getPrivateKey(), REWORDS);
-		this.addTransaction(transaction, null);
+
+		Transaction transaction = new Transaction(BLOCKCHAIN_NETWORK_ADDRESS, minerAddress, wallet.getPublicKey(),
+				wallet.getPrivateKey(), REWORDS);
+		this.pool.addTransaction(transaction, null, isChainAddress(BLOCKCHAIN_NETWORK_ADDRESS));
 		int nonce = this.proofOfWork();
 		String previousHash = this.previousHash();
 		this.createBlock(nonce, previousHash);
@@ -159,10 +129,10 @@ public class BlockChain {
 		System.out.println("*********************");
 		System.out.println();
 	}
-	
+
 	@Override
 	public String toString() {
-		String template = "{chain: %s, minerAddress: %s}"; 
+		String template = "{chain: %s, minerAddress: %s}";
 		return String.format(template, chain.toString(), minerAddress);
 	}
 
@@ -170,12 +140,11 @@ public class BlockChain {
 	public List<Block> getChain() {
 		return chain;
 	}
-	
-	public List<Transaction> getTransactionPool() {
-		return transactionPool;
+
+	public List<Transaction> getTransactions() {
+		return this.pool.getTransactions();
 	}
 
-	
 	public String getMinerAddress() {
 		return minerAddress;
 	}

@@ -18,15 +18,14 @@ class BlockChainTest {
 		Transaction t = new Transaction(walletA.getBlockchainAddress(), walletB.getBlockchainAddress(),
 				walletA.getPublicKey(), walletA.getPrivateKey(), new BigDecimal("123.123"));
 
-		bc.addTransaction(t, t.generateSignature());
+		bc.createTransaction(t, t.generateSignature());
 		bc.mining();
-		bc.addTransaction(t, t.generateSignature());
-		bc.mining();
-		bc.addTransaction(t, t.generateSignature());
+		bc.createTransaction(t, t.generateSignature());
+		bc.createTransaction(t, t.generateSignature());
 		bc.mining();
 		
 		// 3回マイニングしてるため
-		assertEquals(bc.calculateTotalAmount(bc.getMinerAddress()), new BigDecimal("3.0"));
+		assertEquals(bc.calculateTotalAmount(bc.getMinerAddress()), new BigDecimal("2.0"));
 		assertEquals(bc.calculateTotalAmount(walletA.getBlockchainAddress()), new BigDecimal("-369.369"));
 		assertEquals(bc.calculateTotalAmount(walletB.getBlockchainAddress()), new BigDecimal("369.369"));
 	}
@@ -47,11 +46,11 @@ class BlockChainTest {
 		Transaction t = new Transaction(walletA.getBlockchainAddress(), walletB.getBlockchainAddress(),
 				walletA.getPublicKey(), walletA.getPrivateKey(), new BigDecimal("1.1"));
 
-		bc.addTransaction(t, t.generateSignature());
+		bc.createTransaction(t, t.generateSignature());
 		bc.mining();
-		bc.addTransaction(t, t.generateSignature());
+		bc.createTransaction(t, t.generateSignature());
 		bc.mining();
-		bc.addTransaction(t, t.generateSignature());
+		bc.createTransaction(t, t.generateSignature());
 		bc.mining();
 		bc.printChain();
 		

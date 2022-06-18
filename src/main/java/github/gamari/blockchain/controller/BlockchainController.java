@@ -39,12 +39,12 @@ public class BlockchainController {
 		BlockChain bc = BlockChain.getInstance();
 
 		// レスポンス用に加工
-		List<String> ret = bc.getTransactionPool().stream().map(t -> {
+		List<String> ret = bc.getTransactions().stream().map(t -> {
 			String template = "[recipient: %s, sender: %s, value: %s]";
 			return String.format(template, t.getRecipientAddress(), t.getSenderAddress(), t.getValue());
 		}).collect(Collectors.toList());
 
-		TransactionResponse response = new TransactionResponse(ret, bc.getTransactionPool().size());
+		TransactionResponse response = new TransactionResponse(ret, bc.getTransactions().size());
 
 		return response;
 	}
