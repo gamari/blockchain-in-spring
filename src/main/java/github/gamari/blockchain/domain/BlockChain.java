@@ -7,20 +7,40 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import github.gamari.blockchain.logic.Logger;
+
 public class BlockChain {
 
 	private static final String BLOCKCHAIN_NETWORK_ADDRESS = "BLOCKCHAIN_NETWORK";
 	private static final BigDecimal REWORDS = new BigDecimal("1.0");
+	private static Logger logger = Logger.getInstance();
 
+	private static BlockChain blockchain;
+	
 	List<Transaction> transactionPool;
 	List<Block> chain;
 	String minerAddress;
 
-	public BlockChain(String minerAddress) {
+	private BlockChain(String minerAddress) {
 		this.transactionPool = new ArrayList<Transaction>();
 		this.chain = new ArrayList<Block>();
 		this.createBlock(0, "init hash");
 		this.minerAddress = minerAddress;
+	}
+	
+	public static BlockChain getInstance(String minerAddress) {
+		// TODO DBから取得するようにする。
+		if (blockchain == null) {
+			try {
+				Wallet minerWallet = new Wallet();
+				blockchain = new BlockChain(minerWallet.getBlockchainAddress());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		logger.info(blockchain);
+		
+		return blockchain;
 	}
 
 	public Block createBlock(int nonce, String previousHash) {
@@ -146,6 +166,12 @@ public class BlockChain {
 		}
 		System.out.println("*********************");
 		System.out.println();
+	}
+	
+	@Override
+	public String toString() {
+		String template = "{chain: \n%s, \nminerAddress: \n%s}"; 
+		return String.format(template, chain.toString(), minerAddress);
 	}
 
 	// Getter Setter

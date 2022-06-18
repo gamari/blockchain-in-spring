@@ -6,18 +6,6 @@
 
 
 
-```mermaid
-Graph TD
-
-A[Transaction]
-
-
-```
-
-
-
-
-
 ## Sync transaction
 
 

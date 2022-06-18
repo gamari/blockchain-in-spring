@@ -31,7 +31,7 @@ class TransactionTest {
 		
 		byte[] sign = t.generateSignature();
 
-		BlockChain blockchain = new BlockChain(walletM.getBlockchainAddress());
+		BlockChain blockchain = BlockChain.getInstance(walletM.getBlockchainAddress());
 		boolean isAdded = blockchain.addTransaction(t, sign);
 
 		System.out.println(isAdded);
