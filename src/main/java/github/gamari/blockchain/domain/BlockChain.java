@@ -1,39 +1,36 @@
 package github.gamari.blockchain.domain;
 
 import java.math.BigDecimal;
-import java.security.Signature;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import github.gamari.blockchain.logic.Logger;
-
 public class BlockChain {
-
-	private static final String BLOCKCHAIN_NETWORK_ADDRESS = "BLOCKCHAIN_NETWORK";
-	private static final BigDecimal REWORDS = new BigDecimal("1.0");
-	private static Logger logger = Logger.getInstance();
-
+	public static final String BLOCKCHAIN_NETWORK_ADDRESS = "BLOCKCHAIN_NETWORK";
 	private static BlockChain blockchain;
+	private static final BigDecimal REWORDS = new BigDecimal("1.0");
 	
-	List<Transaction> transactionPool;
-	List<Block> chain;
-	String minerAddress;
+	private List<Transaction> transactionPool;
+	private List<Block> chain;
+	private String minerAddress;
+	private Wallet wallet;
 
-	private BlockChain(String minerAddress) {
+	private BlockChain(String minerAddress, Wallet wallet) {
 		this.transactionPool = new ArrayList<Transaction>();
 		this.chain = new ArrayList<Block>();
 		this.createBlock(0, "init hash");
 		this.minerAddress = minerAddress;
+		this.wallet = wallet;
 	}
+	
 	
 	public static BlockChain getInstance() {
 		// TODO DBから取得するようにする。
 		if (blockchain == null) {
 			try {
 				Wallet minerWallet = new Wallet();
-				blockchain = new BlockChain(minerWallet.getBlockchainAddress());
+				blockchain = new BlockChain(minerWallet.getBlockchainAddress(), minerWallet);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -42,7 +39,7 @@ public class BlockChain {
 		return blockchain;
 	}
 
-	public Block createBlock(int nonce, String previousHash) {
+	private Block createBlock(int nonce, String previousHash) {
 		Block newBlock = new Block(previousHash, nonce, new Date(), transactionPool);
 		this.chain.add(newBlock);
 		transactionPool = new ArrayList<Transaction>();
@@ -50,7 +47,7 @@ public class BlockChain {
 		return newBlock;
 	}
 	
-	public String previousHash() {
+	private String previousHash() {
 		return chain.get(chain.size() - 1).hash();
 	}
 
@@ -69,7 +66,7 @@ public class BlockChain {
 			return true;
 		}
 
-		if (verifyTransactionSignature(transaction, signature)) {
+		if (transaction.verifyTransactionSignature(signature)) {
 			// TODO マイナスを判定する処理
 //			if (calculateTotalAmount(senderAddress).compareTo(transaction.getValue())  < 0) {
 //				System.out.println("MINUS");
@@ -94,19 +91,6 @@ public class BlockChain {
 	
 	private boolean isMinerAddress(String senderAddress) {
 		return senderAddress.equals(BLOCKCHAIN_NETWORK_ADDRESS);
-	}
-
-	public boolean verifyTransactionSignature(Transaction transaction, byte[] signature) {
-		try {
-			String originalText = transaction.getTransactionMessage();
-			Signature verify = Signature.getInstance("SHA1withECDSA");
-			verify.initVerify(transaction.getSenderPublicKey());
-			verify.update(originalText.getBytes());
-			return verify.verify(signature);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
 	}
 
 	/**
@@ -138,7 +122,7 @@ public class BlockChain {
 			return false;
 		}
 		
-		Transaction transaction = new Transaction(BLOCKCHAIN_NETWORK_ADDRESS, minerAddress, null, null, REWORDS);
+		Transaction transaction = new Transaction(BLOCKCHAIN_NETWORK_ADDRESS, minerAddress, wallet.getPublicKey(), wallet.getPrivateKey(), REWORDS);
 		this.addTransaction(transaction, null);
 		int nonce = this.proofOfWork();
 		String previousHash = this.previousHash();
@@ -178,7 +162,7 @@ public class BlockChain {
 	
 	@Override
 	public String toString() {
-		String template = "{chain: \n%s, \nminerAddress: \n%s}"; 
+		String template = "{chain: %s, minerAddress: %s}"; 
 		return String.format(template, chain.toString(), minerAddress);
 	}
 
@@ -191,4 +175,8 @@ public class BlockChain {
 		return transactionPool;
 	}
 
+	
+	public String getMinerAddress() {
+		return minerAddress;
+	}
 }

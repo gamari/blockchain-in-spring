@@ -18,7 +18,7 @@ public class Logger {
 		return logger;
 	}
 	
-	public void info(Object o) {
-		System.out.println(o);
+	public void info(Object o, String url, String action) {
+		System.out.println(url + " " + action + " " + o.toString());
 	}
 }

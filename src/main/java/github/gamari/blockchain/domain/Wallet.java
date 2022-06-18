@@ -31,7 +31,6 @@ public class Wallet {
 		privateKey = keyPair.getPrivate();
 
 		this.blockchainAddress = generateBlockchainAddress();
-
 	}
 
 	/**
@@ -43,15 +42,12 @@ public class Wallet {
 			throws NoSuchAlgorithmException, NoSuchProviderException, DecoderException {
 		// 2. pubkeyをsha256で変換する
 		// pubkey -> byte[] ->sha256 -> byte[]-digest
-		byte[] publicKeyBytes = this.publicKey.getEncoded();
-		MessageDigest md = MessageDigest.getInstance("SHA-256");
-		md.update(publicKeyBytes);
-		byte[] sha256PublicKeyDigest = md.digest();
+		byte[] sha256PublicKeyDigest = convertToSha256Bytes(this.publicKey.getEncoded());
 
 		// 3.
 		// byte[] -> ripemd160 -> byte[] -> hex-string
 		Security.addProvider(new BouncyCastleProvider());
-		md = MessageDigest.getInstance("RIPEMD160", "BC");
+		MessageDigest md = MessageDigest.getInstance("RIPEMD160", "BC");
 		md.update(sha256PublicKeyDigest);
 		byte[] ripemd160PublicKeyDigest = md.digest();
 
@@ -69,7 +65,7 @@ public class Wallet {
 		String sha256NetworkBitcoinHex = new String(Hex.encodeHex(sha256NetworkBitcoinDigest2));
 
 		// 6. check sum
-		char[] checkSum = sha256NetworkBitcoinHex.substring(0, 8).toCharArray();
+		char[] checkSum = getChecksum(sha256NetworkBitcoinHex);
 
 		// 7.
 		// networkBitcoinPublicKey-byte[] + checkSum
@@ -87,8 +83,18 @@ public class Wallet {
 
 		return blockchainAddress;
 	}
+	
+	private byte[] convertToSha256Bytes(byte[] target) throws NoSuchAlgorithmException  {
+		MessageDigest md = MessageDigest.getInstance("SHA-256");
+		md.update(target);
+		return md.digest();
+	}
+	
+	private char[] getChecksum(String hex) {
+		return hex.substring(0, 8).toCharArray();
+	}
 
-	// Getter Setter
+	// ----Getter Setter----
 	public String getBlockchainAddress() {
 		return blockchainAddress;
 	}

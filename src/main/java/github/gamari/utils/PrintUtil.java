@@ -13,7 +13,4 @@ public class PrintUtil {
 		System.out.println("\n----Bytes----\n");
 	}
 	
-//	public static void printBytesToHex(byte[] bytes) {
-//		
-//	}
 }
