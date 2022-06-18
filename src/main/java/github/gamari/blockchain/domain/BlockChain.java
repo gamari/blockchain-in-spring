@@ -66,6 +66,10 @@ public class BlockChain {
 	}
 	
 	public boolean mining() {
+		if (this.transactionPool.size() == 0) {
+			return false;
+		}
+		
 		this.addTransaction(BLOCKCHAIN_NETWORK_ADDRESS, minerAddress, REWORDS);
 		int nonce = this.proofOfWork();
 		String previousHash = this.previousHash();
