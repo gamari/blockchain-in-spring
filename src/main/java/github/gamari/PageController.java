@@ -17,4 +17,10 @@ public class PageController {
 		model.addAttribute("message", "Hello Thymeleaf!!");
 		return "hello";
 	}
+	
+	@GetMapping("/wallet")
+	public String wallet(Model model) {
+		model.addAttribute("message", "Hello Thymeleaf!!");
+		return "wallet";
+	}
 }
