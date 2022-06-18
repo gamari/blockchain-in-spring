@@ -39,8 +39,6 @@ public class BlockChain {
 			}
 		}
 		
-		logger.info(blockchain);
-		
 		return blockchain;
 	}
 
