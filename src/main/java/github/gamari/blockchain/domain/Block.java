@@ -4,15 +4,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.persistence.Entity;
-
 import github.gamari.blockchain.logic.Algorithm;
 import github.gamari.blockchain.logic.Sha256Algorithm;
 
 /**
  * データと書名を格納する場所。
  */
-@Entity
 public class Block {
 	
 	private List<Transaction> transactions;

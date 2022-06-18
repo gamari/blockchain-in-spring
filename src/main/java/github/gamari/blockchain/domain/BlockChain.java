@@ -35,26 +35,42 @@ public class BlockChain {
 		return chain.get(chain.size() - 1).hash();
 	}
 
+	/**
+	 * トランザクションプールにトランザクションを追加する。
+	 * 
+	 * @param transaction
+	 * @param signature
+	 * @return
+	 */
 	public boolean addTransaction(Transaction transaction, byte[] signature) {
-		if (transaction.getSenderAddress().equals(BLOCKCHAIN_NETWORK_ADDRESS)) {
+		String senderAddress = transaction.getSenderAddress();
+		
+		if (isMinerAddress(senderAddress)) {
 			this.transactionPool.add(transaction);
 			return true;
 		}
 
-		System.out.println(transaction);
-		
 		if (verifyTransactionSignature(transaction, signature)) {
+			// TODO マイナスを判定する処理
+//			if (calculateTotalAmount(senderAddress).compareTo(transaction.getValue())  < 0) {
+//				System.out.println("MINUS");
+//				return false;
+//			}
+			
 			this.transactionPool.add(transaction);
 			return true;
 		}
 
 		return false;
 	}
+	
+	private boolean isMinerAddress(String senderAddress) {
+		return senderAddress.equals(BLOCKCHAIN_NETWORK_ADDRESS);
+	}
 
 	public boolean verifyTransactionSignature(Transaction transaction, byte[] signature) {
 		try {
 			String originalText = transaction.getTransactionMessage();
-
 			Signature verify = Signature.getInstance("SHA1withECDSA");
 			verify.initVerify(transaction.getSenderPublicKey());
 			verify.update(originalText.getBytes());
@@ -68,7 +84,7 @@ public class BlockChain {
 	/**
 	 * 前回のブロック情報から解を求める。 この「解」は
 	 */
-	public int proofOfWork() {
+	private int proofOfWork() {
 		int nonce = 0;
 		String previousHash = this.previousHash();
 		while (!this.validProof(this.transactionPool, previousHash, nonce, 3)) {
@@ -78,7 +94,7 @@ public class BlockChain {
 		return nonce;
 	}
 
-	public boolean validProof(List<Transaction> transactions, String previousHash, int nonce, int difficulty) {
+	private boolean validProof(List<Transaction> transactions, String previousHash, int nonce, int difficulty) {
 		Block guessBlock = new Block(previousHash, nonce, null, transactions);
 		String guessHash = guessBlock.hash();
 

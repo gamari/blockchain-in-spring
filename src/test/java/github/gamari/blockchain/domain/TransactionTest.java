@@ -29,8 +29,6 @@ class TransactionTest {
 				walletA.getPublicKey(), walletA.getPrivateKey(), 
 				new BigDecimal("1.1"));
 		
-		System.out.println(t);
-
 		byte[] sign = t.generateSignature();
 
 		BlockChain blockchain = new BlockChain(walletM.getBlockchainAddress());
@@ -39,11 +37,14 @@ class TransactionTest {
 		System.out.println(isAdded);
 
 		blockchain.mining();
+		
+		blockchain.printChain();
+		System.out.println(blockchain.calculateTotalAmount(walletA.getBlockchainAddress()));
+		System.out.println(blockchain.calculateTotalAmount(walletB.getBlockchainAddress()));
 	}
 
 	@Test
 	void testSignature() {
-
 		/**
 		 * キーペアを発行
 		 */

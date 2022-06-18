@@ -34,6 +34,12 @@ public class Wallet {
 
 	}
 
+	/**
+	 * 擬似的なアドレスを生成する。
+	 * 若干、ビットコインのフロートは違うことに注意。
+	 * 
+	 * @return ウォレットアドレス。
+	 */
 	public String generateBlockchainAddress()
 			throws NoSuchAlgorithmException, NoSuchProviderException, DecoderException {
 		// 2. pubkeyをsha256で変換する
