@@ -38,6 +38,7 @@ public class BlockChain {
 				e.printStackTrace();
 			}
 		}
+		
 		logger.info(blockchain);
 		
 		return blockchain;
@@ -50,7 +51,7 @@ public class BlockChain {
 
 		return newBlock;
 	}
-
+	
 	public String previousHash() {
 		return chain.get(chain.size() - 1).hash();
 	}
@@ -83,6 +84,15 @@ public class BlockChain {
 
 		return false;
 	}
+	
+	public boolean createTransaction(Transaction transaction, byte[] signature) {
+		boolean isCreated = addTransaction(transaction, signature);
+		
+		// TODO Sync function
+		
+		return isCreated;
+	}
+	
 	
 	private boolean isMinerAddress(String senderAddress) {
 		return senderAddress.equals(BLOCKCHAIN_NETWORK_ADDRESS);

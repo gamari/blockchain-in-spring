@@ -8,11 +8,11 @@ import github.gamari.blockchain.domain.Wallet;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-@RequestMapping("/api")
+@RequestMapping("/api/wallet")
 @RestController
 public class WalletController {
 
-	@PostMapping("/wallet")
+	@PostMapping("/")
 	public WalletResponse createWallet() throws Exception {
 		Wallet wallet = new Wallet();
 
@@ -22,8 +22,17 @@ public class WalletController {
 				wallet.getBlockchainAddress());
 
 		return response;
-
 	}
+	
+	@PostMapping("/transaction")
+	public String createTransaction() {
+		// TODO jsonで取得する
+		// TODO 本来は、ウォレットサーバー<->チェーンサーバー間でポストを投げる
+//		Transaction transaction = new Transaction();
+		
+		return "";
+	}
+	
 
 	@AllArgsConstructor
 	@Data
