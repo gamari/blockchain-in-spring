@@ -67,6 +67,8 @@ public class BlockChain {
 		return senderAddress.equals(BLOCKCHAIN_NETWORK_ADDRESS);
 	}
 
+	
+	
 	/**
 	 * 前回のブロック情報から解を求める。 この「解」は
 	 */

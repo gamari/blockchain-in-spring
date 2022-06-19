@@ -1,5 +1,6 @@
 package github.gamari.blockchain.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -8,9 +9,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import github.gamari.blockchain.controller.request.TransactionRequest;
+import github.gamari.blockchain.controller.response.AmountResponse;
 import github.gamari.blockchain.controller.response.TransactionPostResponse;
 import github.gamari.blockchain.controller.response.TransactionResponse;
 import github.gamari.blockchain.controller.response.WalletPostResponse;
@@ -61,7 +64,6 @@ public class BlockchainController {
 			byte[] sign = transaction.generateSignature();
 			boolean isSuccess = bc.createTransaction(transaction, sign);
 			return new TransactionPostResponse(isSuccess);
-
 		} catch (Exception e) {
 			e.printStackTrace();
 			return new TransactionPostResponse(false);
@@ -80,6 +82,7 @@ public class BlockchainController {
 		return response;
 	}
 
+	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/mining")
 	public String mining() {
 		logger.info("マイニングAPI", "/api/mining", "GET");
@@ -92,5 +95,14 @@ public class BlockchainController {
 		} else {
 			return "Fail";
 		}
+	}
+	
+	@CrossOrigin(origins = "http://localhost:3000")
+	@GetMapping("/amount")
+	public AmountResponse amount(@RequestParam("address") String address) {
+		BlockChain bc = BlockChain.getInstance();
+		BigDecimal amount = bc.calculateTotalAmount(address);
+		
+		return new AmountResponse(amount.toString());
 	}
 }
