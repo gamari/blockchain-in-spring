@@ -11,13 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/page")
 public class PageController {
-
-	@GetMapping("/hello")
-	public String hello(Model model) {
-		model.addAttribute("message", "Hello Thymeleaf!!");
-		return "hello";
-	}
-	
 	@GetMapping("/wallet")
 	public String wallet(Model model) {
 		model.addAttribute("message", "Hello Thymeleaf!!");

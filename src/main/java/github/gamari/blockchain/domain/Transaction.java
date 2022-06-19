@@ -5,6 +5,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import github.gamari.utils.PrintUtil;
 
 /**
@@ -14,8 +16,13 @@ import github.gamari.utils.PrintUtil;
 public class Transaction {
 	private String senderAddress;
 	private String recipientAddress;
+	
+	@JsonIgnore
 	private PublicKey senderPublicKey;
+	
+	@JsonIgnore
 	private PrivateKey senderPrivateKey;
+	
 	private BigDecimal value;
 
 	public Transaction(String senderAddress, String recipientAddress, PublicKey senderPublicKey,

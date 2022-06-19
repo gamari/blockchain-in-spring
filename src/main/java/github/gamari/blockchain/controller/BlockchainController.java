@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RestController;
 import github.gamari.blockchain.controller.request.TransactionRequest;
 import github.gamari.blockchain.controller.response.TransactionPostResponse;
 import github.gamari.blockchain.controller.response.TransactionResponse;
+import github.gamari.blockchain.controller.response.WalletPostResponse;
 import github.gamari.blockchain.domain.BlockChain;
 import github.gamari.blockchain.domain.Transaction;
+import github.gamari.blockchain.domain.Wallet;
 import github.gamari.blockchain.logic.Logger;
 
 @RequestMapping("/api")
@@ -33,18 +35,11 @@ public class BlockchainController {
 	}
 
 	@GetMapping("/transaction")
-	public TransactionResponse transactions() {
+	public TransactionResponse getTransaction() {
 		logger.info("トランザクションGET-API", "GET", "/api/transaction");
 
 		BlockChain bc = BlockChain.getInstance();
-
-		// レスポンス用に加工
-		List<String> ret = bc.getTransactions().stream().map(t -> {
-			String template = "[recipient: %s, sender: %s, value: %s]";
-			return String.format(template, t.getRecipientAddress(), t.getSenderAddress(), t.getValue());
-		}).collect(Collectors.toList());
-
-		TransactionResponse response = new TransactionResponse(ret, bc.getTransactions().size());
+		TransactionResponse response = new TransactionResponse(bc.getTransactions(), bc.getTransactions().size());
 
 		return response;
 	}
@@ -69,6 +64,17 @@ public class BlockchainController {
 			e.printStackTrace();
 			return new TransactionPostResponse(false);
 		}
+	}
+
+	@PostMapping("/wallet")
+	public WalletPostResponse createWallet() throws Exception {
+		// TODO ログイン処理を作る際に新規作成フローを変える
+		Wallet newWallet = new Wallet();
+
+		WalletPostResponse response = new WalletPostResponse(newWallet.getPrivateKeyString(),
+				newWallet.getPublicKeyString(), newWallet.getBlockchainAddress());
+
+		return response;
 	}
 
 	@GetMapping("/mining")
