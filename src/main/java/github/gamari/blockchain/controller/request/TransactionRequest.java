@@ -11,6 +11,8 @@ import java.security.spec.X509EncodedKeySpec;
 
 import org.bouncycastle.util.encoders.Hex;
 
+import github.gamari.utils.PrintUtil;
+
 public class TransactionRequest implements Serializable {
 	private static final long serialVersionUID = 1L;
 	BigDecimal value;
@@ -19,10 +21,11 @@ public class TransactionRequest implements Serializable {
 	String senderBlockchainAddress;
 	String recipientBlockchainAddress;
 	
+	@Override
 	public String toString() {
-		return String.format("[\nvalue: %d\n]", value.toString());
+		return PrintUtil.toString(this);
 	}
-	
+
 	// Setter Getter
 	public void setValue(String value) {
 		this.value = new BigDecimal(value);

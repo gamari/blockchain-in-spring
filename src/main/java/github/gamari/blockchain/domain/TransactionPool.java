@@ -3,6 +3,8 @@ package github.gamari.blockchain.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import github.gamari.utils.PrintUtil;
+
 public class TransactionPool {
 	private List<Transaction> pool;
 	
@@ -53,6 +55,12 @@ public class TransactionPool {
 	public void clear() {
 		this.pool = new ArrayList<Transaction>();
 	}
+	
+	@Override
+	public String toString() {
+		return PrintUtil.toString(this);
+	}
+
 
 	// GetterSetter
 	public List<Transaction> getTransactions() {

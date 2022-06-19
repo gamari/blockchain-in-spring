@@ -54,11 +54,6 @@ class BlockChainTest {
 		bc.mining();
 		bc.printChain();
 		
-		
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		
 		System.out.println(bc);
 	}
 	

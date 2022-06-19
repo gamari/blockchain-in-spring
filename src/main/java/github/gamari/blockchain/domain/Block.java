@@ -2,10 +2,10 @@ package github.gamari.blockchain.domain;
 
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import github.gamari.blockchain.logic.Algorithm;
 import github.gamari.blockchain.logic.Sha256Algorithm;
+import github.gamari.utils.PrintUtil;
 
 /**
  * データと書名を格納する場所。
@@ -33,14 +33,7 @@ public class Block {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("{'timestamp': " + this.timestamp);
-		sb.append(", 'nonce': " + this.nonce);
-		sb.append(", 'previousHash': " + this.previousHash);
-		sb.append(
-				", 'transactions': " + this.transactions.stream().map(t -> t.toString()).collect(Collectors.joining()));
-		sb.append("}");
-		return sb.toString();
+		return PrintUtil.toString(this);
 	}
 
 	// Getter Setter

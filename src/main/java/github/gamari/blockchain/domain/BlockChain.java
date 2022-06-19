@@ -6,6 +6,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
+import github.gamari.utils.PrintUtil;
+
 public class BlockChain {
 	public static final String BLOCKCHAIN_NETWORK_ADDRESS = "BLOCKCHAIN_NETWORK";
 	private static BlockChain blockchain;
@@ -118,22 +123,16 @@ public class BlockChain {
 	}
 
 	public void printChain() {
-		int count = 0;
-		System.out.println("*********************");
-		for (Block block : chain) {
-			System.out.println(String.format("----- Chain %d -----", count));
-			System.out.println(block);
-			System.out.println("TransactionPool: ");
-			count++;
-		}
-		System.out.println("*********************");
-		System.out.println();
+		System.out.println("---------Chain---------");
+		this.chain.stream().forEach(item -> {
+			System.out.println(ToStringBuilder.reflectionToString(item, ToStringStyle.MULTI_LINE_STYLE));
+		});
+		System.out.println("---------Chain---------\n\n");
 	}
 
 	@Override
 	public String toString() {
-		String template = "{chain: %s, minerAddress: %s}";
-		return String.format(template, chain.toString(), minerAddress);
+		return PrintUtil.toString(this);
 	}
 
 	// Getter Setter

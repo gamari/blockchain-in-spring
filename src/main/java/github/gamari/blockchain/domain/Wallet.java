@@ -13,6 +13,8 @@ import java.util.Base64;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class Wallet {
@@ -92,6 +94,11 @@ public class Wallet {
 	
 	private char[] getChecksum(String hex) {
 		return hex.substring(0, 8).toCharArray();
+	}
+	
+	@Override
+	public String toString() {
+		return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
 	}
 
 	// ----Getter Setter----

@@ -5,6 +5,8 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Signature;
 
+import github.gamari.utils.PrintUtil;
+
 /**
  * 取引履歴。
  *
@@ -63,13 +65,11 @@ public class Transaction {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append("  senderAddress: " + this.senderAddress + "\n");
-		sb.append("  recipientAddress: " + this.recipientAddress + "\n");
-		sb.append("  value: " + this.value + "\n");
-		return sb.toString();
+		return PrintUtil.toString(this);
 	}
 
+
+	// Getter Setter
 	public BigDecimal getValue() {
 		return value;
 	}

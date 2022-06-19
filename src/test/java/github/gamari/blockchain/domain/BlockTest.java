@@ -28,5 +28,21 @@ class BlockTest {
 		assertEquals(block1.hash(), block2.hash());
 		
 	}
+	
+	@Test
+	void ToStringのテスト() {
+		Block block1 = new Block("block", 10, null, new ArrayList<Transaction>());
+		System.out.println(block1);
+	}
 
 }
+
+
+
+
+
+
+
+
+
+
