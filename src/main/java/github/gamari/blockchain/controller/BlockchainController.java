@@ -3,6 +3,7 @@ package github.gamari.blockchain.controller;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,6 +45,7 @@ public class BlockchainController {
 		return response;
 	}
 
+	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/transaction")
 	public TransactionPostResponse createTransaction(@RequestBody TransactionRequest request) {
 		logger.info("トランザクションPOST-API", "/api/transaction", "POST");
@@ -66,6 +68,7 @@ public class BlockchainController {
 		}
 	}
 
+	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/wallet")
 	public WalletPostResponse createWallet() throws Exception {
 		// TODO ログイン処理を作る際に新規作成フローを変える
