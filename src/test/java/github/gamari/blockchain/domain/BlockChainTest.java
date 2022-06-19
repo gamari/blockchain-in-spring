@@ -31,10 +31,18 @@ class BlockChainTest {
 	}
 	
 	@Test
-	void ブロックの作成が成功すること() {
+	void トランザクション作成時にチェーンにブロックが作成されないこと() throws Exception {
 		BlockChain bc = BlockChain.getInstance();
+		Wallet walletA = new Wallet();
+		Wallet walletB = new Wallet();
+
+		Transaction transaction = new Transaction(walletA.getBlockchainAddress(), walletB.getBlockchainAddress(),
+				walletA.getPublicKey(), walletA.getPrivateKey(), new BigDecimal("123.123"));
+		
+		bc.createTransaction(transaction, transaction.generateSignature());
+		
+		assertEquals(bc.getChain().size(), 0);
 	}
-	
 	
 	@Test
 	void printChainの表示確認用() throws Exception {

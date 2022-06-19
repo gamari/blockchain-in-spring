@@ -18,7 +18,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class Wallet {
-
 	private PublicKey publicKey;
 	private PrivateKey privateKey;
 	private String blockchainAddress;
@@ -28,13 +27,14 @@ public class Wallet {
 		KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
 		SecureRandom secureRandom = new SecureRandom();
 		generator.initialize(256, secureRandom);
+		
 		KeyPair keyPair = generator.generateKeyPair();
-		publicKey = keyPair.getPublic();
-		privateKey = keyPair.getPrivate();
-
-		this.blockchainAddress = generateBlockchainAddress();
+		
+		this.publicKey = keyPair.getPublic();
+		this.privateKey = keyPair.getPrivate();
+		this.blockchainAddress = this.generateBlockchainAddress();
 	}
-
+	
 	/**
 	 * 擬似的なアドレスを生成する。 若干、ビットコインのフロートは違うことに注意。
 	 * 

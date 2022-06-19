@@ -1,8 +1,6 @@
 package github.gamari.blockchain.controller;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import github.gamari.blockchain.controller.request.TransactionRequest;
 import github.gamari.blockchain.controller.response.AmountResponse;
+import github.gamari.blockchain.controller.response.ChainResponse;
+import github.gamari.blockchain.controller.response.MiningResponse;
 import github.gamari.blockchain.controller.response.TransactionPostResponse;
 import github.gamari.blockchain.controller.response.TransactionResponse;
 import github.gamari.blockchain.controller.response.WalletPostResponse;
@@ -22,20 +22,17 @@ import github.gamari.blockchain.domain.Transaction;
 import github.gamari.blockchain.domain.Wallet;
 import github.gamari.blockchain.logic.Logger;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api")
 @RestController
 public class BlockchainController {
 	private final Logger logger = Logger.getInstance();
 
 	@GetMapping("/chain")
-	public List<String> getChain() {
+	public ChainResponse getChain() {
+		logger.info("チェーンGET-API", "GET", "/api/chain");
 		BlockChain blockchain = BlockChain.getInstance();
-
-		List<String> result = blockchain.getChain().stream().map(item -> {
-			return item.toString();
-		}).collect(Collectors.toList());
-
-		return result;
+		return new ChainResponse(blockchain.getChain());
 	}
 
 	@GetMapping("/transaction")
@@ -48,7 +45,6 @@ public class BlockchainController {
 		return response;
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/transaction")
 	public TransactionPostResponse createTransaction(@RequestBody TransactionRequest request) {
 		logger.info("トランザクションPOST-API", "/api/transaction", "POST");
@@ -70,7 +66,6 @@ public class BlockchainController {
 		}
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
 	@PostMapping("/wallet")
 	public WalletPostResponse createWallet() throws Exception {
 		// TODO ログイン処理を作る際に新規作成フローを変える
@@ -82,22 +77,16 @@ public class BlockchainController {
 		return response;
 	}
 
-	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/mining")
-	public String mining() {
+	public MiningResponse mining() {
 		logger.info("マイニングAPI", "/api/mining", "GET");
 
 		BlockChain bc = BlockChain.getInstance();
 		boolean isMine = bc.mining();
-
-		if (isMine) {
-			return "Success";
-		} else {
-			return "Fail";
-		}
+		
+		return new MiningResponse(isMine);
 	}
 	
-	@CrossOrigin(origins = "http://localhost:3000")
 	@GetMapping("/amount")
 	public AmountResponse amount(@RequestParam("address") String address) {
 		BlockChain bc = BlockChain.getInstance();

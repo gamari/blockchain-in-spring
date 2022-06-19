@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import BlockComponent from "../../components/BlockComponent";
 
 const index = () => {
   // Wallet information
@@ -11,10 +12,13 @@ const index = () => {
   const [recipientAddress, setRecipientAddress] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
 
-  // Mining Infromation
+  // Chain Information
+  const [chain, setChain] = useState<[any]>();
 
   useEffect(() => {
     const fetchUrl = "http://localhost:8080/api/wallet";
+
+    // ウォレット情報を取得
     fetch(fetchUrl, {
       method: "POST",
       mode: "cors",
@@ -29,7 +33,29 @@ const index = () => {
         setPublicKey(data["publicKey"]);
         setAddress(data["blockchainAddress"]);
       });
+
+    handleGetChain();
   }, []);
+
+  const handleGetChain = () => {
+    // ブロックチェーン情報を取得
+    const fetchChain = "http://localhost:8080/api/chain";
+    fetch(fetchChain, {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        console.log(res);
+        return res.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setChain(data["chain"]);
+      });
+  };
 
   const handleSendMoney = () => {
     const sendMoneyUrl = "http://localhost:8080/api/transaction";
@@ -93,16 +119,17 @@ const index = () => {
         console.log(res);
       })
       .then((data) => {
-        alert("マイニングしました。");
+        alert("マイニングが完了しました。");
       });
   };
 
   return (
-    <div className="flex flex-col justify-center items-center container mx-auto">
+    <div className="section">
       {/* ウォレット情報 */}
       <div className="flex flex-col">
-        <h1 className="font-bold text-4xl my-6">Wallet Information</h1>
+        <h1 className="section-title">Wallet Information</h1>
 
+        {/* Information */}
         <div className="flex flex-col p-4 space-y-6 mx-auto max-w-6xl break-words">
           <div>
             <h1 className="font-bold text-2xl">Your PrivateKey</h1>
@@ -124,70 +151,105 @@ const index = () => {
             <p className="border-[1px] border-gray-500 p-2">
               {ownAmount ? <>{ownAmount}</> : <>なし</>}
             </p>
-            <button
-              className="border-2 border-gray-300"
-              onClick={() => {
-                reload_amount();
-              }}
-            >
-              更新
-            </button>
+          </div>
+
+          {/* Action */}
+          <div>
+            <h1 className="font-bold text-2xl">操作</h1>
+            <p className="border-[1px] border-gray-500 p-2 flex flex-row space-x-2">
+              <button
+                className="btn btn-gray"
+                onClick={() => {
+                  reload_amount();
+                }}
+              >
+                残高を更新する
+              </button>
+              <button
+                className="btn btn-gray"
+                onClick={() => {
+                  handleMining();
+                }}
+              >
+                手動でマイニング
+              </button>
+
+              <button
+                className="btn btn-gray"
+                onClick={() => {
+                  handleGetChain();
+                }}
+              >
+                ブロック情報を更新
+              </button>
+            </p>
           </div>
         </div>
       </div>
 
-      {/* 送金 */}
-      <div className="flex flex-col">
-        <h1>送金情報</h1>
+      {/* 送金情報 */}
+      <div className="section mt-10">
+        <h1 className="section-title">送金情報</h1>
 
-        <div>
-          <h2>送金先</h2>
-          <input
-            type="text"
-            className="max-w-4xl border-2 border-black w-full"
-            value={recipientAddress}
-            onChange={(e) => {
-              setRecipientAddress(e.target.value);
-            }}
-          />
-        </div>
+        <div className="">
+          <div>
+            <h2>送金先</h2>
+            <input
+              type="text"
+              className="max-w-4xl border-2 border-black w-full"
+              value={recipientAddress}
+              onChange={(e) => {
+                setRecipientAddress(e.target.value);
+              }}
+            />
+          </div>
 
-        <div className="my-5">
-          <h2 className="">金額</h2>
-          <input
-            type="text"
-            className="max-w-4xl border-2 border-black"
-            value={amount}
-            onChange={(e) => {
-              setAmount(e.target.value);
-            }}
-          />
-        </div>
+          <div className="my-5">
+            <h2 className="">金額</h2>
+            <input
+              type="text"
+              className="max-w-4xl border-2 border-black"
+              value={amount}
+              onChange={(e) => {
+                setAmount(e.target.value);
+              }}
+            />
+          </div>
 
-        <button
-          className="border-2 border-gray-500 hover:bg-gray-600 hover:text-white"
-          onClick={() => {
-            handleSendMoney();
-          }}
-        >
-          送金する
-        </button>
-      </div>
-
-      {/* Mining情報 */}
-      <div>
-        <h1>マイニング情報</h1>
-        <div>
           <button
-            className="border-2 border-gray-500"
+            className="border-2 border-gray-500 hover:bg-gray-600 hover:text-white"
             onClick={() => {
-              handleMining();
+              handleSendMoney();
             }}
           >
-            手動でマイニング
+            送金する
           </button>
         </div>
       </div>
+
+      {/* ブロックチェーン情報 */}
+      <div className="section mt-10">
+        <h1 className="section-title">ブロックチェーン情報</h1>
+        <p>ブロックチェーンの情報を表示します。</p>
+        <div className="flex flex-row break-words space-x-4 mt-10">
+          {chain?.map((block: any, i) => {
+            return (
+              <div key={i}>
+                <div>block{i}</div>
+                <BlockComponent
+                  previous_hash={block.previousHash}
+                  nonce={block.nonce}
+                  transactions={block.transactions}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <footer className="h-24 bg-gray-100 w-[100vw] flex justify-center items-center">
+        <div>footer</div>
+      </footer>
     </div>
   );
 };

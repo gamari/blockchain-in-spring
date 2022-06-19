@@ -30,9 +30,9 @@ public class BlockChain {
 	}
 
 	public static BlockChain getInstance() {
-		// TODO DBから取得するようにする。
 		if (blockchain == null) {
 			try {
+				// TODO Wallet情報をDBから取得するようにする。
 				Wallet minerWallet = new Wallet();
 				blockchain = new BlockChain(minerWallet.getBlockchainAddress(), minerWallet);
 			} catch (Exception e) {
@@ -54,12 +54,12 @@ public class BlockChain {
 		return chain.get(chain.size() - 1).hash();
 	}
 
-
-
 	public boolean createTransaction(Transaction transaction, byte[] signature) {
-		boolean isCreated = this.pool.addTransaction(transaction, signature, isChainAddress(transaction.getSenderAddress()));
+		boolean isCreated = this.pool.addTransaction(transaction, signature,
+				isChainAddress(transaction.getSenderAddress()));
 
-		// TODO Sync function
+		// TODO 他サーバーと同期処理を行う
+
 		return isCreated;
 	}
 
@@ -67,15 +67,13 @@ public class BlockChain {
 		return senderAddress.equals(BLOCKCHAIN_NETWORK_ADDRESS);
 	}
 
-	
-	
 	/**
 	 * 前回のブロック情報から解を求める。 この「解」は
 	 */
 	private int proofOfWork() {
 		int nonce = 0;
 		String previousHash = this.previousHash();
-		while (!this.validProof(this.pool.getTransactions(), previousHash, nonce, 3)) {
+		while (this.inValidProof(this.pool.getTransactions(), previousHash, nonce, 3)) {
 			nonce++;
 		}
 
@@ -92,6 +90,10 @@ public class BlockChain {
 
 		return ret;
 	}
+	
+	private boolean inValidProof(List<Transaction> transactions, String previousHash, int nonce, int difficulty) {
+		return this.validProof(transactions, previousHash, nonce, difficulty);
+	}
 
 	public boolean mining() {
 		if (this.pool.size() == 0) {
@@ -104,6 +106,7 @@ public class BlockChain {
 		int nonce = this.proofOfWork();
 		String previousHash = this.previousHash();
 		this.createBlock(nonce, previousHash);
+		
 		return true;
 	}
 

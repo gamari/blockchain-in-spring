@@ -40,5 +40,16 @@ public class Block {
 	public List<Transaction> getTransactions() {
 		return transactions;
 	}
+	
+	public String getPreviousHash() {
+		return previousHash;
+	}
+	
+	public Date getTimestamp() {
+		return timestamp;
+	}
 
+	public int getNonce() {
+		return nonce;
+	}
 }
