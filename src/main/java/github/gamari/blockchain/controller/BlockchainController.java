@@ -32,6 +32,7 @@ public class BlockchainController {
 	public ChainResponse getChain() {
 		logger.info("チェーンGET-API", "GET", "/api/chain");
 		BlockChain blockchain = BlockChain.getInstance();
+		System.out.println(blockchain.getChain());
 		return new ChainResponse(blockchain.getChain());
 	}
 

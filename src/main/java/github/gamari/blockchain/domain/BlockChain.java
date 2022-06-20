@@ -9,9 +9,11 @@ import java.util.List;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import github.gamari.blockchain.logic.Logger;
 import github.gamari.utils.PrintUtil;
 
 public class BlockChain {
+	private final Logger logger = Logger.getInstance();
 	public static final String BLOCKCHAIN_NETWORK_ADDRESS = "BLOCKCHAIN_NETWORK";
 	private static BlockChain blockchain;
 	private static final BigDecimal REWORDS = new BigDecimal("1.0");
@@ -92,7 +94,7 @@ public class BlockChain {
 	}
 	
 	private boolean inValidProof(List<Transaction> transactions, String previousHash, int nonce, int difficulty) {
-		return this.validProof(transactions, previousHash, nonce, difficulty);
+		return !this.validProof(transactions, previousHash, nonce, difficulty);
 	}
 
 	public boolean mining() {
@@ -104,6 +106,7 @@ public class BlockChain {
 				wallet.getPrivateKey(), REWORDS);
 		this.pool.addTransaction(transaction, null, isChainAddress(BLOCKCHAIN_NETWORK_ADDRESS));
 		int nonce = this.proofOfWork();
+		logger.info(nonce, "BlockChain.class", "mining");
 		String previousHash = this.previousHash();
 		this.createBlock(nonce, previousHash);
 		
