@@ -1,8 +1,9 @@
 import React from "react";
+import { BlockType, ChainType } from "../types/blockchain";
 import Block from "./Block";
 
 type Props = {
-  chain?: [any];
+  chain?: ChainType;
 };
 
 const BlockChainInformation: React.FC<Props> = ({ chain }) => {
@@ -11,12 +12,12 @@ const BlockChainInformation: React.FC<Props> = ({ chain }) => {
       <h1 className="section-title">ブロックチェーン情報</h1>
       <p>ブロックチェーンの情報を表示します。</p>
       <div className="flex flex-row break-words space-x-4 mt-10">
-        {chain?.map((block: any, i) => {
+        {chain?.blocks?.map((block: BlockType, i) => {
           return (
             <div key={i}>
               <div>block{i}</div>
               <Block
-                previous_hash={block.previousHash}
+                previous_hash={block.previous_hash}
                 nonce={block.nonce}
                 transactions={block.transactions}
               />

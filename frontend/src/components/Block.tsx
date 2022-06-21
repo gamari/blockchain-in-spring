@@ -1,9 +1,10 @@
 import React from "react";
+import { TransactionType } from "../types/blockchain";
 
 type Props = {
   previous_hash?: string;
   nonce?: string;
-  transactions: [any];
+  transactions?: [TransactionType];
 };
 
 const Block: React.FC<Props> = ({ previous_hash, nonce, transactions }) => {

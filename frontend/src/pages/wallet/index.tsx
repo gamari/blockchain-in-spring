@@ -3,8 +3,9 @@ import BlockChainInformation from "../../components/BlockChainInformation";
 import Footer from "../../components/Footer";
 import SendMoney from "../../components/SendMoney";
 import WalletInformation from "../../components/WalletInformation";
-import { chain_url } from "../../constants/ulrs";
-import { fetch_chain } from "../../libs/FetchApi";
+import { amount_url, chain_url, wallet_url } from "../../constants/ulrs";
+import { fetch_chain, fetch_wallet, get_amount } from "../../libs/FetchApi";
+import { ChainType } from "../../types/blockchain";
 
 const index = () => {
   // Wallet information
@@ -14,11 +15,11 @@ const index = () => {
   const [ownAmount, setOwnAmount] = useState<string>("");
 
   // Chain Information
-  const [chain, setChain] = useState<[any]>();
+  const [chain, setChain] = useState<ChainType>();
 
   useEffect(() => {
     // ウォレット情報の取得
-    fetch_chain(chain_url).then((chain) => {
+    fetch_wallet(wallet_url).then((chain) => {
       setPublicKey(chain.public_key);
       setAddress(chain.wallet_address);
       setPrivateKey(chain.private_key);
@@ -28,55 +29,27 @@ const index = () => {
     handleGetChain();
   }, []);
 
-  const handleGetChain = () => {
-    // ブロックチェーン情報を取得
-    const fetchChain = "http://localhost:8080/api/chain";
-    fetch(fetchChain, {
-      method: "GET",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        setChain(data["chain"]);
-      });
+  const handleGetChain = async () => {
+    const chain = await fetch_chain(chain_url);
+    setChain(chain);
   };
 
-  const reload_amount = () => {
-    const reload_url = "http://localhost:8080/api/amount?";
-    const params = {
-      address: address,
-    };
-    const query_params = new URLSearchParams(params);
-    fetch(reload_url + query_params, {
-      method: "GET",
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        console.log(data);
-        alert(`残高の更新をしました[残高=${data["amount"]}]`);
-        setOwnAmount(data["amount"]);
-      });
+  const reload_amount = async () => {
+    const amount = await get_amount(address, amount_url);
+    setOwnAmount(amount);
+    alert(`残高の更新をしました[残高=${amount}]`);
   };
 
-  const handleMining = () => {
+  const handleMining = async () => {
     const mining_url = "http://localhost:8080/api/mining";
 
-    fetch(mining_url, {
+    const response = await fetch(mining_url, {
       method: "GET",
-    })
-      .then((res) => {
-        console.log(res);
-      })
-      .then((data) => {
-        alert("マイニングが完了しました。");
-      });
+    });
+
+    const data = await response.json();
+
+    alert("マイニングが完了しました。");
   };
 
   return (
@@ -101,18 +74,10 @@ const index = () => {
           <button
             className="btn btn-gray"
             onClick={() => {
-              reload_amount();
-            }}
-          >
-            残高を更新する
-          </button>
-          <button
-            className="btn btn-gray"
-            onClick={() => {
               handleMining();
             }}
           >
-            手動でマイニング
+            1⃣手動でマイニング
           </button>
 
           <button
@@ -121,7 +86,15 @@ const index = () => {
               handleGetChain();
             }}
           >
-            ブロック情報を更新
+            2⃣ブロック情報を更新
+          </button>
+          <button
+            className="btn btn-gray"
+            onClick={() => {
+              reload_amount();
+            }}
+          >
+            3⃣残高を更新する
           </button>
         </p>
       </div>

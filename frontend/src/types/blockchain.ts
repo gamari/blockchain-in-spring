@@ -6,13 +6,13 @@ export type BlockType = {
 }
 
 export type TransactionType = {
-    sender_address: string
-    recipient_address: string
+    recipientAddress: string
+    senderAddress: string
     value: string
 }
 
 export type ChainType = {
-    chain: [BlockType]
+    blocks: [BlockType]
 }
 
 export type WalletInformation = {
