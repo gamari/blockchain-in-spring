@@ -11,7 +11,7 @@ const SendMoney: React.FC<Props> = ({ publicKey, privateKey, address }) => {
   const [recipientAddress, setRecipientAddress] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
 
-  const handleSendMoney = () => {
+  const handleSendMoney = async () => {
     const transaction_data = {
       senderPublicKey: publicKey,
       senderPrivateKey: privateKey,
@@ -19,27 +19,22 @@ const SendMoney: React.FC<Props> = ({ publicKey, privateKey, address }) => {
       recipientBlockchainAddress: recipientAddress,
       value: amount,
     };
-
-    fetch(send_money_url, {
+    const response = await fetch(send_money_url, {
       method: "POST",
       mode: "cors",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(transaction_data),
-    })
-      .then((res) => {
-        if (res.status == 400) {
-          throw Error("error");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        alert("送金処理が完了しました。");
-      })
-      .catch((e) => {
-        alert("失敗しました。");
-      });
+    });
+
+    if (response.status != 201) {
+      alert("エラーが発生しました。");
+      return;
+    }
+
+    const json = await response.json();
+    alert("送金が完了しました。");
   };
 
   return (

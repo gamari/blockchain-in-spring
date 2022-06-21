@@ -1,4 +1,4 @@
-package github.gamari.blockchain.controller.response;
+package github.gamari.wallet.controller.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

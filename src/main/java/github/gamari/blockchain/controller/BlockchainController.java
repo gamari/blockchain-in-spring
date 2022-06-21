@@ -59,6 +59,8 @@ public class BlockchainController {
 
 			byte[] sign = transaction.generateSignature();
 			boolean isSuccess = bc.createTransaction(transaction, sign);
+			logger.info(isSuccess, "/chain/transaction", "POST");
+			logger.info("トランザクションPOST-API END", "/chain/transaction", "POST");
 			return new TransactionPostResponse(isSuccess);
 		} catch (Exception e) {
 			e.printStackTrace();
