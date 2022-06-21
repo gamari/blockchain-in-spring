@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { blockchain_atom } from "../../atoms/BlockChainAtoms";
@@ -9,6 +10,7 @@ import SendMoney from "../../components/SendMoney";
 import WalletInformation from "../../components/WalletInformation";
 import { chain_url, wallet_url } from "../../constants/ulrs";
 import { fetch_chain, fetch_wallet } from "../../libs/FetchApi";
+import { UserType } from "../../types/user";
 
 const uid = () => {
   // Wallet information
@@ -19,13 +21,38 @@ const uid = () => {
 
   // Chain Information
   const [chain, setChain] = useRecoilState(blockchain_atom);
+  const router = useRouter();
+  const { uid } = router.query;
 
   useEffect(() => {
-    handleGetWallet();
-    handleGetChain();
-  }, []);
+    if (router.isReady) {
+      handleGetWallet();
+      handleGetChain();
+    }
+  }, [uid, router]);
 
   const handleGetWallet = async () => {
+    // TODO リファクタリング
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const { uid } = router.query;
+
+    const user: UserType = users.filter((user: UserType) => {
+      return user?.uid == uid;
+    })[0];
+
+    if (
+      user &&
+      user?.uid &&
+      user?.private_key &&
+      user?.public_key &&
+      user?.address
+    ) {
+      setPublicKey(user?.public_key);
+      setAddress(user?.address);
+      setPrivateKey(user?.private_key);
+      return;
+    }
+
     // ウォレット情報の取得
     const wallet = await fetch_wallet(wallet_url);
 
@@ -33,6 +60,17 @@ const uid = () => {
     setAddress(wallet.wallet_address);
     setPrivateKey(wallet.private_key);
     setAmount(wallet.amount);
+
+    const updateUsers = users?.map((user: UserType) => {
+      if (user?.uid == uid) {
+        user.address = wallet.wallet_address;
+        user.private_key = wallet.private_key;
+        user.public_key = wallet.public_key;
+      }
+      console.log(user);
+      return user;
+    });
+    updateUsers && localStorage.setItem("users", JSON.stringify(updateUsers));
   };
 
   const handleGetChain = async () => {
