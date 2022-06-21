@@ -1,62 +1,70 @@
+import Link from "next/link";
 import React, { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
-import { blockchain_atom } from "../../atoms/BlockChainAtoms";
-import { wallet_amount_atom } from "../../atoms/WalletAtoms";
-import ActionBox from "../../components/ActionBox";
-import BlockChainInformation from "../../components/BlockChainInformation";
-import Footer from "../../components/Footer";
-import SendMoney from "../../components/SendMoney";
-import WalletInformation from "../../components/WalletInformation";
-import { chain_url, wallet_url } from "../../constants/ulrs";
-import { fetch_chain, fetch_wallet } from "../../libs/FetchApi";
+import { UserType } from "../../types/user";
 
 const index = () => {
-  // Wallet information
-  const [privateKey, setPrivateKey] = useState<string>("");
-  const [publicKey, setPublicKey] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
-  const [amount, setAmount] = useRecoilState(wallet_amount_atom);
+  const [uid, setUid] = useState<string>("");
+  const [userList, setUserList] = useState<UserType[]>([]);
 
-  // Chain Information
-  const [chain, setChain] = useRecoilState(blockchain_atom);
+  const handleCreateUser = () => {
+    const updateList = [
+      ...userList,
+      {
+        uid: uid,
+      },
+    ];
+    setUserList(updateList);
+
+    localStorage.setItem("users", JSON.stringify(updateList));
+
+    setUid("");
+  };
 
   useEffect(() => {
-    handleGetWallet();
-    handleGetChain();
+    const users = localStorage.getItem("users");
+    users && setUserList(JSON.parse(users));
   }, []);
-
-  const handleGetWallet = async () => {
-    // ウォレット情報の取得
-    const wallet = await fetch_wallet(wallet_url);
-
-    setPublicKey(wallet.public_key);
-    setAddress(wallet.wallet_address);
-    setPrivateKey(wallet.private_key);
-    setAmount(wallet.amount);
-  };
-
-  const handleGetChain = async () => {
-    const chain = await fetch_chain(chain_url);
-    setChain(chain);
-  };
 
   return (
     <div className="section">
-      <WalletInformation
-        publicKey={publicKey}
-        privateKey={privateKey}
-        address={address}
-        amount={amount}
-      />
-      <SendMoney
-        publicKey={publicKey}
-        privateKey={privateKey}
-        address={address}
-      />
-      <ActionBox address={address} />
-      <BlockChainInformation chain={chain} />
+      <div className="section my-4">
+        <h2 className="section-title">ユーザーを作成する</h2>
+        <div>
+          <input
+            type="text"
+            className="border-[1px] border-black"
+            value={uid}
+            onChange={(e) => {
+              setUid(e.target.value);
+            }}
+          />
+          <button
+            className="bg-blue-700 text-white  px-3 py-1 ml-2"
+            onClick={() => {
+              handleCreateUser();
+            }}
+          >
+            作成
+          </button>
+        </div>
+      </div>
 
-      <Footer />
+      <div className="section">
+        <h2 className="section-title">ユーザーリスト</h2>
+        {userList.length ? (
+          <>
+            {userList?.map((user: UserType) => {
+              return (
+                <Link href={`/wallet/${user.uid}`}>
+                  <a>{user.uid}</a>
+                </Link>
+              );
+            })}
+          </>
+        ) : (
+          <>ユーザーなし</>
+        )}
+      </div>
     </div>
   );
 };
