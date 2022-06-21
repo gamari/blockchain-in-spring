@@ -6,11 +6,7 @@ type Props = {
   transactions: [any];
 };
 
-const BlockComponent: React.FC<Props> = ({
-  previous_hash,
-  nonce,
-  transactions,
-}) => {
+const Block: React.FC<Props> = ({ previous_hash, nonce, transactions }) => {
   return (
     <div className=" border-2 border-black p-6 w-72">
       <div>
@@ -45,4 +41,4 @@ const BlockComponent: React.FC<Props> = ({
   );
 };
 
-export default BlockComponent;
+export default Block;

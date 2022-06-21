@@ -6,11 +6,7 @@ type Props = {
   address: string;
 };
 
-const SendMoneyComponent: React.FC<Props> = ({
-  publicKey,
-  privateKey,
-  address,
-}) => {
+const SendMoney: React.FC<Props> = ({ publicKey, privateKey, address }) => {
   const [recipientAddress, setRecipientAddress] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
 
@@ -89,4 +85,4 @@ const SendMoneyComponent: React.FC<Props> = ({
   );
 };
 
-export default SendMoneyComponent;
+export default SendMoney;

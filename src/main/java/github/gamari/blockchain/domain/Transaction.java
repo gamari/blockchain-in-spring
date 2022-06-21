@@ -16,6 +16,7 @@ import github.gamari.utils.PrintUtil;
 public class Transaction {
 	private String senderAddress;
 	private String recipientAddress;
+	private BigDecimal value;
 	
 	@JsonIgnore
 	private PublicKey senderPublicKey;
@@ -23,7 +24,6 @@ public class Transaction {
 	@JsonIgnore
 	private PrivateKey senderPrivateKey;
 	
-	private BigDecimal value;
 
 	public Transaction(String senderAddress, String recipientAddress, PublicKey senderPublicKey,
 			PrivateKey senderPrivateKey, BigDecimal value) {

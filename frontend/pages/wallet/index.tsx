@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import BlockChainInformation from "../../components/BlockChainInformation";
-import SendMoneyComponent from "../../components/SendMoneyComponent";
+import Footer from "../../components/Footer";
+import SendMoney from "../../components/SendMoney";
 import WalletInformation from "../../components/WalletInformation";
+import { fetch_chain } from "../../libs/FetchApi";
 
 const index = () => {
   // Wallet information
@@ -17,20 +19,27 @@ const index = () => {
     const fetchUrl = "http://localhost:8080/api/wallet";
 
     // ウォレット情報を取得
-    fetch(fetchUrl, {
-      method: "POST",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        setPrivateKey(data["privateKey"]);
-        setPublicKey(data["publicKey"]);
-        setAddress(data["blockchainAddress"]);
-      });
+    // fetch(fetchUrl, {
+    //   method: "POST",
+    //   mode: "cors",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    // })
+    //   .then((res) => res.json())
+    //   .then((data) => {
+    //     setPrivateKey(data["privateKey"]);
+    //     setPublicKey(data["publicKey"]);
+    //     setAddress(data["blockchainAddress"]);
+    //   });
+
+    fetch_chain("http://localhost:8080/api/wallet").then((chain) => {
+      console.log(chain);
+      setPublicKey(chain.public_key);
+      setAddress(chain.wallet_address);
+      setPrivateKey(chain.private_key);
+      setOwnAmount(chain.amount);
+    });
 
     handleGetChain();
   }, []);
@@ -46,11 +55,9 @@ const index = () => {
       },
     })
       .then((res) => {
-        console.log(res);
         return res.json();
       })
       .then((data) => {
-        console.log(data);
         setChain(data["chain"]);
       });
   };
@@ -90,21 +97,14 @@ const index = () => {
 
   return (
     <div className="section">
-      {/* ウォレット情報 */}
-      <div className="flex flex-col">
-        <h1 className="section-title">ウォレット情報</h1>
+      <WalletInformation
+        publicKey={publicKey}
+        privateKey={privateKey}
+        address={address}
+        amount={ownAmount}
+      />
 
-        {/* Information */}
-        <WalletInformation
-          publicKey={publicKey}
-          privateKey={privateKey}
-          address={address}
-          amount={ownAmount}
-        />
-      </div>
-
-      {/* 送金情報 */}
-      <SendMoneyComponent
+      <SendMoney
         publicKey={publicKey}
         privateKey={privateKey}
         address={address}
@@ -145,9 +145,7 @@ const index = () => {
       {/* ブロックチェーン情報 */}
       <BlockChainInformation chain={chain} />
 
-      <footer className="h-24 bg-gray-100 w-[100vw] flex justify-center items-center">
-        <div>footer</div>
-      </footer>
+      <Footer />
     </div>
   );
 };

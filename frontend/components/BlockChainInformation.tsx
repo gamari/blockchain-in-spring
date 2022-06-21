@@ -1,5 +1,5 @@
 import React from "react";
-import BlockComponent from "./BlockComponent";
+import Block from "./Block";
 
 type Props = {
   chain?: [any];
@@ -15,7 +15,7 @@ const BlockChainInformation: React.FC<Props> = ({ chain }) => {
           return (
             <div key={i}>
               <div>block{i}</div>
-              <BlockComponent
+              <Block
                 previous_hash={block.previousHash}
                 nonce={block.nonce}
                 transactions={block.transactions}
