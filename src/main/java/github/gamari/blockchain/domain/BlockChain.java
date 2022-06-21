@@ -11,6 +11,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import github.gamari.blockchain.logic.Logger;
 import github.gamari.utils.PrintUtil;
+import github.gamari.wallet.domain.Wallet;
 
 public class BlockChain {
 	private final Logger logger = Logger.getInstance();

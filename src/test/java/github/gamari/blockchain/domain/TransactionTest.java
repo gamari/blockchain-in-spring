@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 
 import org.junit.jupiter.api.Test;
 
+import github.gamari.wallet.domain.Wallet;
+
 class TransactionTest {
 
 	@Test

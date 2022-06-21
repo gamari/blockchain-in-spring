@@ -1,4 +1,4 @@
-package github.gamari.blockchain.domain;
+package github.gamari.wallet.domain;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;

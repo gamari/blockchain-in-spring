@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { send_money_url } from "../constants/ulrs";
 
 type Props = {
   publicKey: string;
@@ -11,8 +12,6 @@ const SendMoney: React.FC<Props> = ({ publicKey, privateKey, address }) => {
   const [amount, setAmount] = useState<string>("");
 
   const handleSendMoney = () => {
-    const sendMoneyUrl = "http://localhost:8080/api/transaction";
-
     const transaction_data = {
       senderPublicKey: publicKey,
       senderPrivateKey: privateKey,
@@ -21,7 +20,7 @@ const SendMoney: React.FC<Props> = ({ publicKey, privateKey, address }) => {
       value: amount,
     };
 
-    fetch(sendMoneyUrl, {
+    fetch(send_money_url, {
       method: "POST",
       mode: "cors",
       headers: {
