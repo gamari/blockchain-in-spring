@@ -28,6 +28,12 @@ const SendMoney: React.FC<Props> = ({ publicKey, privateKey, address }) => {
       body: JSON.stringify(transaction_data),
     });
 
+    if (response.status == 400) {
+      const json = await response.json();
+      alert(json["message"]);
+      return;
+    }
+
     if (response.status != 201) {
       alert("エラーが発生しました。");
       return;

@@ -1,6 +1,8 @@
 package github.gamari.wallet.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import github.gamari.blockchain.logic.Logger;
+import github.gamari.error.exception.ValidationException;
 import github.gamari.wallet.controller.request.WalletTransactionPostRequest;
 import github.gamari.wallet.controller.response.WalletPostResponse;
 import github.gamari.wallet.controller.response.WalletTransactionPostResponse;
@@ -45,9 +48,15 @@ public class WalletController {
 
 	@ResponseStatus(code = HttpStatus.CREATED)
 	@PostMapping("/transaction")
-	public WalletTransactionPostResponse createWalletTransaction(@RequestBody WalletTransactionPostRequest request) throws Exception {
+	public WalletTransactionPostResponse createWalletTransaction(@Validated @RequestBody WalletTransactionPostRequest request, BindingResult result) throws Exception {
 		logger.info("", "/wallet/transaction", "POST");
-		// TODO requestのバリデーションをかける
+		logger.info(request, "/wallet/transaction", "POST");
+		
+		if (result.hasErrors()) {
+			// TODO AOPで共通処理を省きたい。
+			// TODO エラーメッセージをバリデーション内容のものにする。
+			throw new ValidationException("不正な値を入力しています。");
+		}
 
 		// ブロックチェーンサーバーにトランザクション作成処理を投げる。
 		RestTemplate restTemplate = new RestTemplate();
